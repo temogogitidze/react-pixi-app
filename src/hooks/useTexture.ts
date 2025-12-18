@@ -1,28 +1,47 @@
 import { useEffect, useState } from "react";
 import { Assets, type Texture } from "pixi.js";
 
-export function useTexture(src?: string) {
-    const [texture, setTexture] = useState<Texture | null>(null);
+export function useTexture(key?: string) {
+    const [texture, setTexture] = useState<Texture | null>(() => {
+        if (!key) return null;
+        return (Assets.cache.get(key) as Texture | null) ?? null;
+    });
 
     useEffect(() => {
         let alive = true;
 
-        if (!src) return;
-
-        (async () => {
-            try {
-                const tex = await Assets.load<Texture>(src);
-                if (alive) setTexture(tex);
-            } catch (e) {
+        if (!key) {
+            queueMicrotask(() => {
                 if (alive) setTexture(null);
-                console.error("Failed to load texture:", src, e);
-            }
-        })();
+            });
+            return () => {
+                alive = false;
+            };
+        }
+
+        const cached = Assets.cache.get(key) as Texture | undefined;
+        if (cached) {
+            queueMicrotask(() => {
+                if (alive) setTexture(cached);
+            });
+            return () => {
+                alive = false;
+            };
+        }
+
+        Assets.load<Texture>(key)
+            .then((tex) => {
+                if (alive) setTexture(tex);
+            })
+            .catch((e) => {
+                if (alive) setTexture(null);
+                console.error("Failed to load texture:", key, e);
+            });
 
         return () => {
             alive = false;
         };
-    }, [src]);
+    }, [key]);
 
     return texture;
 }
