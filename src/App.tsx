@@ -1,6 +1,5 @@
 import { Application } from "@pixi/react";
-import { useRef } from "react";
-
+import { useMemo, useRef } from "react";
 import { usePreload } from "./hooks/usePreload";
 import Level from "./game/scene/Level";
 import Car from "./game/entities/Car";
@@ -10,19 +9,16 @@ export default function App() {
     const parentRef = useRef<HTMLDivElement>(null);
     const preload = usePreload();
 
+    const overlay = useMemo(() => {
+        if (preload.status === "loading") return "Loading…";
+        if (preload.status === "error")
+            return "Asset load failed. Check console.";
+        return null;
+    }, [preload.status]);
+
     return (
         <div ref={parentRef} className={styles.stage}>
-            {preload.status === "loading" && (
-                <div className={styles.overlay}>Loading…</div>
-            )}
-
-            {preload.status === "error" && (
-                <div className={styles.overlay}>
-                    <div className={styles.error}>
-                        Asset load failed. Check console for details.
-                    </div>
-                </div>
-            )}
+            {overlay && <div className={styles.overlay}>{overlay}</div>}
 
             <Application
                 resizeTo={parentRef}
@@ -32,11 +28,11 @@ export default function App() {
                 autoDensity
                 antialias
             >
-                {preload.status === "ready" && (
+                {preload.status === "ready" ? (
                     <Level>
                         <Car />
                     </Level>
-                )}
+                ) : null}
             </Application>
         </div>
     );
