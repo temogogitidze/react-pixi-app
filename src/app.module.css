@@ -1,25 +1,6 @@
-.stage {
-    position: relative;
+.app {
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
     background: #0b0d10;
-}
-
-.overlay {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    z-index: 2;
-    font: 600 14px/1 system-ui;
-    color: rgba(255, 255, 255, 0.9);
-    pointer-events: none;
-}
-
-.error {
-    color: #ff8a8a;
-    max-width: 560px;
-    text-align: center;
-    padding: 16px;
+    overflow: hidden;
 }

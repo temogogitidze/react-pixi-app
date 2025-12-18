@@ -13,4 +13,14 @@ export default defineConfig(({ mode }) => ({
                 brotliSize: true,
             }),
     ].filter(Boolean),
+
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    pixi: ["pixi.js", "@pixi/react"],
+                },
+            },
+        },
+    },
 }));
