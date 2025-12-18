@@ -5,9 +5,10 @@ import { useRef } from "react";
 
 import Level from "./scene/Level";
 import Car from "./entities/Car";
+
 import styles from "./game.module.css";
 
-export default function Game() {
+const Game = () => {
     const parentRef = useRef(null);
 
     return (
@@ -26,4 +27,6 @@ export default function Game() {
             </Application>
         </div>
     );
-}
+};
+
+export default Game;
